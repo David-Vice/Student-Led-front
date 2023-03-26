@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core'
+import { ApiService } from 'app/services/api.service';
 
 @Component({
   selector: 'app-home',
@@ -6,9 +7,11 @@ import { Component, OnInit } from '@angular/core'
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  constructor(private apiService: ApiService) {}
 
-  public contentHeader: object
+  public contentHeader: object;
+  tmpImage: any = null;
+  tmpFormData: any = null;
 
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
@@ -35,5 +38,48 @@ export class HomeComponent implements OnInit {
         ]
       }
     }
+  }
+
+  uploadPhoto = (event) => {
+    if(event.target.files.length === 0) 
+      return;
+
+    let fileToUpload = <File>event.target.files[0];
+    const formData = new FormData();
+    formData.append('Image', fileToUpload, fileToUpload.name);
+    formData.append('FolderDir', 'Uploads');
+    this.tmpFormData = formData;
+
+    // display locally
+    var reader = new FileReader();
+    reader.onload = (event: any) => {
+      this.tmpImage = event.target.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+  }
+  
+  deletePhoto()
+  {
+    this.tmpImage = null;
+    this.tmpFormData = null;
+  }
+
+  sendPhoto()
+  {
+    this.apiService.uploadPhoto(this.tmpFormData)
+    .subscribe(
+      (response: any) => 
+      {
+        console.log(response)
+      },
+      error => 
+      {
+        console.log(error);
+      },
+      () => 
+      {
+        
+      }
+    );
   }
 }

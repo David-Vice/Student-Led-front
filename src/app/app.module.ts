@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import 'hammerjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -18,6 +18,8 @@ import { coreConfig } from 'app/app-config';
 import { AppComponent } from 'app/app.component';
 import { LayoutModule } from 'app/layout/layout.module';
 import { SampleModule } from 'app/main/sample/sample.module';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { ErrorInterceptor, JwtInterceptor } from './auth/helpers';
 
 const appRoutes: Routes = [
   {
@@ -61,7 +63,18 @@ const appRoutes: Routes = [
     LayoutModule,
     SampleModule
   ],
-
+  providers: 
+  [
+    { 
+      provide: LocationStrategy, 
+      useClass: HashLocationStrategy 
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

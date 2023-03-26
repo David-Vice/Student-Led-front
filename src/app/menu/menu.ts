@@ -8,13 +8,5 @@ export const menu: CoreMenu[] = [
     type: 'item',
     icon: 'home',
     url: 'home'
-  },
-  {
-    id: 'sample',
-    title: 'Sample',
-    translate: 'MENU.SAMPLE',
-    type: 'item',
-    icon: 'file',
-    url: 'sample'
   }
 ]
