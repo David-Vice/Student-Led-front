@@ -48,6 +48,8 @@ export class HomeComponent implements OnInit {
     if(event.target.files.length === 0) 
       return;
 
+    this.detections = [];
+
     let fileToUpload = <File>event.target.files[0];
     const formData = new FormData();
     formData.append('Image', fileToUpload, fileToUpload.name);
