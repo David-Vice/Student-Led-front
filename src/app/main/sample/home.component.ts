@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ApiService } from 'app/services/api.service';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -9,8 +10,10 @@ import { ApiService } from 'app/services/api.service';
 export class HomeComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
+  formLoaded:boolean = false;
   public contentHeader: object;
   tmpImage: any = null;
+  detections: any[] = [];
   tmpFormData: any = null;
 
   // Lifecycle Hooks
@@ -20,6 +23,7 @@ export class HomeComponent implements OnInit {
    * On init
    */
   ngOnInit() {
+    this.formLoaded = true;
     this.contentHeader = {
       headerTitle: 'Home',
       actionButton: true,
@@ -66,11 +70,14 @@ export class HomeComponent implements OnInit {
 
   sendPhoto()
   {
+    this.formLoaded = false;
     this.apiService.uploadPhoto(this.tmpFormData)
     .subscribe(
       (response: any) => 
       {
-        console.log(response)
+        this.tmpImage = environment.apiUrl+"/Uploads/Uploads/"+response['framedImage']+"?version=1";
+        this.detections = JSON.parse(response["details"])['detections'];
+        console.log(this.detections);
       },
       error => 
       {
@@ -78,8 +85,34 @@ export class HomeComponent implements OnInit {
       },
       () => 
       {
-        
+        this.formLoaded = true;
       }
     );
   }
+
+  getName(detection)
+  {
+    return detection["category"] + ' ' + this.round(detection.score*100,2) + '%';
+  }
+
+  round(num: number, decimalPlaces: number): number {
+    const factor = Math.pow(10, decimalPlaces);
+    return Math.round(num * factor) / factor;
+  }
+
+  getTapaz(name)
+  {
+    return "https://tap.az/elanlar?keywords="+name;
+  }
+
+  getEbay(name)
+  {
+    return "https://www.ebay.com/sch/i.html?_nkw="+name;
+  }
+
+  getAmazon(name)
+  {
+    return "https://www.amazon.com/s?k="+name;
+  }
 }
+

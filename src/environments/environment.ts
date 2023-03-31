@@ -5,8 +5,7 @@
 export const environment = {
   production: false,
   hmr: false,
-  apiUrl: 'http://objectdetection-001-site1.atempurl.com'
-
+  apiUrl: 'https://localhost:7031'
 };
 
 /*
